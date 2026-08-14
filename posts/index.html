@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Posts | Random What Tha Farm</title>
+<meta name="description" content="Every farm story, recipe, and homestead tip from Random What Tha Farm.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap top-nav"><a href="../index.html">&larr; Back home</a></div>
+<div class="rows"></div>
+<div class="wrap">
+  <article>
+    <div class="kicker">Archive</div>
+    <h1>Everything We've Posted</h1>
+    <ul class="post-list" id="post-list"></ul>
+  </article>
+</div>
+<footer>Wado &mdash; thanks for reading</footer>
+
+<script>
+  fetch('../posts.json')
+    .then(r => r.json())
+    .then(posts => {
+      const list = document.getElementById('post-list');
+      posts.slice().reverse().forEach(p => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span class="kind">${p.kind}</span>
+          <a class="title" href="../${p.url}">${p.title}</a>
+          <div class="excerpt">${p.excerpt}</div>
+        `;
+        list.appendChild(li);
+      });
+    });
+</script>
+</body>
+</html>
