@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "boiled-peanuts-how-we-do-it",
+    "title": "Boiled Peanuts, the Way We Actually Do It",
+    "kind": "Recipe",
+    "excerpt": "No fancy brine, no timer app. Just salt, water, patience, and knowing what 'done' smells like.",
+    "url": "posts/boiled-peanuts-how-we-do-it.html"
+  },
+  {
+    "slug": "why-we-still-hand-pick-tomatoes",
+    "title": "Why We Still Hand-Pick Every Tomato",
+    "kind": "Farm Life",
+    "excerpt": "Machines are faster. They also don't know the difference between ready and almost.",
+    "url": "posts/why-we-still-hand-pick-tomatoes.html"
+  }
+]

@@ -1,0 +1,106 @@
+:root{
+  --soil: #241a10;
+  --soil-2: #2f2314;
+  --clay: #b5552d;
+  --clay-bright: #d1683a;
+  --wheat: #ede1c3;
+  --wheat-dim: #c9bb9a;
+  --sage: #7c8b64;
+  --gold: #c99a3c;
+  --line: rgba(237,225,195,0.14);
+  --radius: 14px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background: var(--soil);
+  color: var(--wheat);
+  font-family: 'Source Sans 3', sans-serif;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+h1,h2,h3{ font-family: 'Fraunces', serif; font-weight: 600; letter-spacing: -0.01em; }
+a{ color: var(--clay-bright); }
+.wrap{ max-width: 680px; margin: 0 auto; padding: 0 24px; }
+
+.rows{
+  height: 18px;
+  background-image: repeating-linear-gradient(
+    90deg, var(--sage) 0px, var(--sage) 3px, transparent 3px, transparent 26px
+  );
+  opacity: 0.55;
+}
+
+.top-nav{
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+}
+.top-nav a{
+  text-decoration: none;
+  color: var(--wheat-dim);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.top-nav a:hover{ color: var(--clay-bright); }
+
+article{ padding: 44px 0 60px; }
+.kicker{
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+article h1{ font-size: clamp(1.8rem, 5vw, 2.4rem); margin-bottom: 20px; }
+article p{ margin-bottom: 16px; color: var(--wheat); }
+article ul, article ol{ margin: 0 0 16px 22px; color: var(--wheat); }
+article li{ margin-bottom: 6px; }
+.byline{ color: var(--wheat-dim); font-size: 0.88rem; margin-bottom: 28px; }
+
+.card{
+  background: var(--soil-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin: 24px 0;
+}
+
+.wado-close{
+  margin-top: 36px;
+  font-family: 'Fraunces', serif;
+  color: var(--gold);
+  font-size: 1.05rem;
+}
+
+/* archive list */
+.post-list{ list-style:none; margin-top: 20px; }
+.post-list li{
+  border-bottom: 1px solid var(--line);
+  padding: 20px 0;
+}
+.post-list a.title{
+  text-decoration: none;
+  color: var(--wheat);
+  font-family: 'Fraunces', serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.post-list a.title:hover{ color: var(--clay-bright); }
+.post-list .kind{
+  color: var(--gold);
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  display:block;
+  margin-bottom: 6px;
+}
+.post-list .excerpt{ color: var(--wheat-dim); font-size: 0.92rem; margin-top: 6px; }
+
+footer{
+  text-align: center;
+  padding: 40px 0 60px;
+  color: var(--wheat-dim);
+  font-size: 0.88rem;
+  border-top: 1px solid var(--line);
+}
