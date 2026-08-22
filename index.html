@@ -298,6 +298,10 @@
     <div class="video-wrap" id="video-wrap">
       <p class="video-status" id="video-status">Loading today's video&hellip;</p>
     </div>
+    <div class="card" id="video-blurb" style="display:none; margin-top:18px;">
+      <h3 id="video-blurb-title" style="font-size:1.15rem; margin-bottom:10px;"></h3>
+      <p id="video-blurb-desc" style="color:var(--wheat-dim); white-space:pre-line;"></p>
+    </div>
     <p class="archive-note">Pulled straight from the channel &mdash; different video most days. <a href="https://www.youtube.com/@edenssidanelvigalogesvi" target="_blank" rel="noopener">See everything on YouTube</a>.</p>
   </div>
 </section>
@@ -332,7 +336,7 @@
     <div class="section-head"><span class="num">04</span><h2>PC &amp; Stereo Repair</h2></div>
     <p class="sub" style="margin-bottom:20px;">Homestead self-sufficiency isn't just the garden. Tell us what's broken and we'll get back to you.</p>
     <div class="card">
-      <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <form action="https://formspree.io/f/xeajdvja" method="POST">
         <div>
           <label for="name">Name</label>
           <input type="text" id="name" name="name" required>
@@ -350,7 +354,6 @@
           <textarea id="issue" name="issue" required placeholder="What's broken, make/model if you know it, anything you've already tried"></textarea>
         </div>
         <button class="submit" type="submit">Send it over</button>
-        <p class="form-note">This form needs a free Formspree account plugged in before it'll actually deliver &mdash; see the README.</p>
       </form>
     </div>
   </div>
@@ -396,9 +399,12 @@
     const UPLOADS_PLAYLIST_ID = 'UUwDT6rv-N3UWS6i_JJGjAIw'; // channel UC... swapped to UU...
     const videoWrap = document.getElementById('video-wrap');
     const status = document.getElementById('video-status');
+    const blurb = document.getElementById('video-blurb');
+    const blurbTitle = document.getElementById('video-blurb-title');
+    const blurbDesc = document.getElementById('video-blurb-desc');
 
-    async function fetchAllVideoIds(){
-      let ids = [];
+    async function fetchAllVideos(){
+      let videos = [];
       let pageToken = '';
       let pages = 0;
       const MAX_PAGES = 5; // caps at 250 videos, plenty of headroom, keeps quota low
@@ -409,25 +415,32 @@
         if(!res.ok) throw new Error('YouTube API request failed');
         const data = await res.json();
         (data.items || []).forEach(item => {
-          const vid = item.snippet && item.snippet.resourceId && item.snippet.resourceId.videoId;
-          if(vid) ids.push(vid);
+          const s = item.snippet;
+          const vid = s && s.resourceId && s.resourceId.videoId;
+          if(vid) videos.push({ id: vid, title: s.title || '', description: s.description || '' });
         });
         pageToken = data.nextPageToken || '';
         pages++;
       } while(pageToken && pages < MAX_PAGES);
 
-      return ids;
+      return videos;
     }
 
-    fetchAllVideoIds()
-      .then(ids => {
-        if(!ids.length){
+    fetchAllVideos()
+      .then(videos => {
+        if(!videos.length){
           status.textContent = "No videos found yet -- check back soon.";
           return;
         }
         const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(),0,0)) / 86400000);
-        const pick = ids[dayOfYear % ids.length];
-        videoWrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${pick}" title="Today's video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        const pick = videos[dayOfYear % videos.length];
+        videoWrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${pick.id}" title="Today's video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+
+        if(pick.title || pick.description){
+          blurbTitle.textContent = pick.title;
+          blurbDesc.textContent = pick.description;
+          blurb.style.display = 'block';
+        }
       })
       .catch(() => {
         status.textContent = "Couldn't load a video right now -- check the channel directly.";
