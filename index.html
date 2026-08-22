@@ -177,6 +177,29 @@
   .archive-note{ margin-top: 16px; font-size: 0.85rem; color: var(--wheat-dim); }
   .archive-note a{ color: var(--wheat); text-decoration: underline; }
 
+  /* ---------- random video ---------- */
+  .video-wrap{
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 */
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--soil-2);
+    border: 1px solid var(--line);
+  }
+  .video-wrap iframe{
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: 0;
+  }
+  .video-status{
+    color: var(--wheat-dim);
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 20px;
+  }
+
   /* ---------- repair form ---------- */
   form{ display: grid; gap: 14px; }
   label{ font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gold); font-weight: 600; margin-bottom: 6px; display:block; }
@@ -269,9 +292,19 @@
   </div>
 </section>
 
+<section id="video">
+  <div class="wrap">
+    <div class="section-head"><span class="num">02</span><h2>Today's Video</h2></div>
+    <div class="video-wrap" id="video-wrap">
+      <p class="video-status" id="video-status">Loading today's video&hellip;</p>
+    </div>
+    <p class="archive-note">Pulled straight from the channel &mdash; different video most days. <a href="https://www.youtube.com/@edenssidanelvigalogesvi" target="_blank" rel="noopener">See everything on YouTube</a>.</p>
+  </div>
+</section>
+
 <section id="market">
   <div class="wrap">
-    <div class="section-head"><span class="num">02</span><h2>Dothan Produce Market</h2></div>
+    <div class="section-head"><span class="num">03</span><h2>Dothan Produce Market</h2></div>
     <div class="card">
       <dl class="market-grid">
         <div>
@@ -289,7 +322,7 @@
 
 <section id="repair">
   <div class="wrap">
-    <div class="section-head"><span class="num">03</span><h2>PC &amp; Stereo Repair</h2></div>
+    <div class="section-head"><span class="num">04</span><h2>PC &amp; Stereo Repair</h2></div>
     <p class="sub" style="margin-bottom:20px;">Homestead self-sufficiency isn't just the garden. Tell us what's broken and we'll get back to you.</p>
     <div class="card">
       <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
@@ -318,7 +351,7 @@
 
 <section id="sponsors">
   <div class="wrap">
-    <div class="section-head"><span class="num">04</span><h2>Supported By</h2></div>
+    <div class="section-head"><span class="num">05</span><h2>Supported By</h2></div>
     <div class="sponsor-slot">
       Sponsor spots open up here as the site grows. <a href="#" style="color:var(--wheat); text-decoration:underline;">Reach out</a> if that's you.
     </div>
@@ -349,6 +382,50 @@
       document.getElementById('pick-title').textContent = 'First post coming soon';
       document.getElementById('pick-excerpt').textContent = 'Check back shortly.';
     });
+
+  // ---------- Random video from full channel library ----------
+  (function loadRandomVideo(){
+    const API_KEY = 'AIzaSyAbHZMLrA3_12kz3rrLt1t46yefNuOexEg';
+    const UPLOADS_PLAYLIST_ID = 'UUwDT6rv-N3UWS6i_JJGjAIw'; // channel UC... swapped to UU...
+    const videoWrap = document.getElementById('video-wrap');
+    const status = document.getElementById('video-status');
+
+    async function fetchAllVideoIds(){
+      let ids = [];
+      let pageToken = '';
+      let pages = 0;
+      const MAX_PAGES = 5; // caps at 250 videos, plenty of headroom, keeps quota low
+
+      do {
+        const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${UPLOADS_PLAYLIST_ID}&pageToken=${pageToken}&key=${API_KEY}`;
+        const res = await fetch(url);
+        if(!res.ok) throw new Error('YouTube API request failed');
+        const data = await res.json();
+        (data.items || []).forEach(item => {
+          const vid = item.snippet && item.snippet.resourceId && item.snippet.resourceId.videoId;
+          if(vid) ids.push(vid);
+        });
+        pageToken = data.nextPageToken || '';
+        pages++;
+      } while(pageToken && pages < MAX_PAGES);
+
+      return ids;
+    }
+
+    fetchAllVideoIds()
+      .then(ids => {
+        if(!ids.length){
+          status.textContent = "No videos found yet -- check back soon.";
+          return;
+        }
+        const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(),0,0)) / 86400000);
+        const pick = ids[dayOfYear % ids.length];
+        videoWrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${pick}" title="Today's video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      })
+      .catch(() => {
+        status.textContent = "Couldn't load a video right now -- check the channel directly.";
+      });
+  })();
 </script>
 
 </body>
